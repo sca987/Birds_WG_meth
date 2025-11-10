@@ -3,7 +3,6 @@
 # Title: Fledge Methylation Filtering Pipeline
 # Author: Susan C. Anderson
 # Date: 2025-11-04
-# Repository: https://github.com/<your-username>/<your-repo>
 # Description:
 #   Filters CpG methylation data from chestnut-crowned babbler fledglings.
 #   Sequential filters applied:
@@ -21,7 +20,7 @@ suppressPackageStartupMessages(library(data.table))
 
 # -------------------- 1. Load Data --------------------
 fledge_all <- fread("all_fledge_merged_long_20251019_v3_with_missing.csv.gz")
-cat("✅ Loaded dataset with", nrow(fledge_all), "rows and",
+cat("Loaded dataset with", nrow(fledge_all), "rows and",
     uniqueN(fledge_all$sample), "individuals\n")
 
 # -------------------- 2. Remove Bad Individuals --------------------
@@ -89,7 +88,7 @@ cat("After variance filter:",
 out_file <- "all_fledge_filtered_for_model_2025_v1.csv.gz"
 fwrite(fledge_final, out_file, compress = "gzip")
 
-cat("\n✅ Final dataset saved:", out_file, "\n")
+cat("\n Final dataset saved:", out_file, "\n")
 cat("Final unique sites:", uniqueN(fledge_final[, .(chr, pos)]), "\n")
 cat("Final individuals:", uniqueN(fledge_final$sample), "\n")
 
@@ -250,7 +249,7 @@ all_res <- rbindlist(lapply(parts, fread), use.names = TRUE, fill = TRUE)
 
 all_res <- all_res[!is.na(p) & !is.na(term) & !is.na(site_id)]
 
-# 🆕 Save raw, unadjusted EWAS results for DMRFF
+# Save raw, unadjusted EWAS results for DMRFF
 out_raw <- file.path(out_dir, "glmm_results_beta_raw_unadjusted.csv.gz")
 fwrite(all_res, out_raw, compress = "gzip")
 message("Saved raw model output (for DMRFF): ", out_raw)
@@ -304,10 +303,10 @@ suppressPackageStartupMessages({
 
 # -------------------- 1. Load Full Output --------------------
 infile <- "glmm_beta/glmm_results_beta_all.csv.gz"
-cat("📂 Loading:", infile, "\n")
+cat("Loading:", infile, "\n")
 full <- fread(infile)
 
-cat("✅ Loaded", nrow(full), "rows across",
+cat("Loaded", nrow(full), "rows across",
     uniqueN(full$site_id), "unique CpG sites\n\n")
 
 # -------------------- 2. Deduplicate per Site-Term --------------------
@@ -320,11 +319,11 @@ setorder(full, site_id, term, p_adj_global)
 full_min <- full[, .SD[1], by = .(site_id, term)]
 
 after_n <- nrow(full_min)
-cat(sprintf("✅ Reduced from %d → %d unique site-term pairs\n\n",
+cat(sprintf("Reduced from %d → %d unique site-term pairs\n\n",
             before_n, after_n))
 
 # -------------------- 3. Pivot to Wide Format --------------------
-cat("🔄 Pivoting to wide format (Intercept + carers3+)...\n")
+cat("Pivoting to wide format (Intercept + carers3+)...\n")
 
 wide <- full_min %>%
   filter(term %in% c("(Intercept)", "carers3+")) %>%
@@ -341,10 +340,10 @@ wide <- full_min %>%
     p_adj_byterm_carers3plus = `p_adj_by_term_carers3+`
   )
 
-cat("✅ Pivoted data to wide format — one row per CpG site\n\n")
+cat("Pivoted data to wide format — one row per CpG site\n\n")
 
 # -------------------- 4. Compute Δβ and Δ% --------------------
-cat("📈 Calculating Δβ and Δ% (3+ carers – 2 carers)...\n")
+cat("Calculating Δβ and Δ% (3+ carers – 2 carers)...\n")
 
 inv_logit <- function(x) exp(x) / (1 + exp(x))
 
@@ -356,10 +355,10 @@ wide <- wide %>%
     delta_percent = 100 * delta_beta
   )
 
-cat("✅ Calculated predicted methylation change for all sites\n\n")
+cat("Calculated predicted methylation change for all sites\n\n")
 
 # -------------------- 5. Apply FDR and Effect Size Filters --------------------
-cat("🎯 Applying filters (FDR ≤ 0.01 & |Δ%| ≥ 25)...\n")
+cat("Applying filters (FDR ≤ 0.01 & |Δ%| ≥ 25)...\n")
 
 summary_filtered <- wide %>%
   filter(
@@ -367,7 +366,7 @@ summary_filtered <- wide %>%
     abs(delta_percent) >= 25
   )
 
-cat("✅ Retained", nrow(summary_filtered),
+cat("Retained", nrow(summary_filtered),
     "sites with FDR ≤ 0.01 and |Δ%| ≥ 25%\n")
 cat("Unique sites:", uniqueN(summary_filtered$site_id), "\n\n")
 
@@ -378,8 +377,8 @@ dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 outfile <- file.path(out_dir, "glmm_beta_significant_sites_FDR01_25pp.csv.gz")
 fwrite(summary_filtered, outfile, compress = "gzip")
 
-cat("💾 Saved filtered results to:", outfile, "\n")
-cat("✅ Pipeline complete!\n")
+cat("Saved filtered results to:", outfile, "\n")
+cat("Pipeline complete!\n")
 
 # ================================================================
 # End of Script
