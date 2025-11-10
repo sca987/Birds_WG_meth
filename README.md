@@ -7,7 +7,7 @@ The pipeline processes site-level methylation calls into a final, model-ready da
 
 All analyses were done on the Lawrence Supercomputer using a high-memory (himem) node.
 
-
+The files for the models are too large to store here. Please email me at susan.c.anderson@coyotes.usd.edu for full data. 
 
 
 
