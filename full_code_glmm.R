@@ -19,7 +19,7 @@
 suppressPackageStartupMessages(library(data.table))
 
 # -------------------- 1. Load Data --------------------
-fledge_all <- fread("all_fledge_merged_long_20251019_v3_with_missing.csv.gz")
+fledge_all <- fread("all_fledge_filtered_for_model_2025_v1.csv.gz")
 cat("Loaded dataset with", nrow(fledge_all), "rows and",
     uniqueN(fledge_all$sample), "individuals\n")
 
