@@ -1,0 +1,105 @@
+
+# What’s in This Folder
+
+This folder contains the complete analysis workflow and final results for the carers (2 vs 3+) methylation GLMM analysis in chestnut-crowned babbler fledglings.
+
+The analysis focuses on identifying CpG sites and differentially methylated regions (DMRs) associated with cooperative care group (2 carers vs 3+ carers), using site-specific beta regression models.
+
+---
+
+## Full_code
+
+This file contains the complete end-to-end analysis pipeline, including:
+
+- Methylation data filtering
+  - ≥10× coverage threshold
+  - Removal of 99.9th percentile per-sample coverage outliers
+  - ≥60% site presence per carers group
+  - Removal of lowest 10% variance sites
+
+- Site-specific beta regression GLMM:
+  
+  perc_meth ~ carers + xfoster + age + (1 | natal_group)
+
+- By-term Benjamini–Hochberg FDR correction
+- Calculation of predicted methylation differences (Δ%)
+- Filtering of significant CpGs:
+  - FDR ≤ 0.01
+  - Absolute methylation difference ≥ 25%
+- Genomic annotation of significant CpGs
+- DMR identification using DMRFF (carers3+ term only)
+
+This script fully reproduces the results in this folder when run with the appropriate input data.
+
+---
+
+## glmm_beta_significant_sites_CARERS_bytermFDR01_25pp.csv
+
+Final filtered significant CpG sites representing the carers3+ effect only.
+
+Inclusion criteria:
+- By-term FDR ≤ 0.01
+- Absolute methylation change ≥ 25%
+
+Each row corresponds to one CpG site meeting these thresholds.
+
+---
+
+## glmm_results_beta_all_carers_xfoster_age.csv
+
+Full per-site GLMM output for all model terms:
+- (Intercept)
+- carers3+
+- xfoster
+- age
+
+This file contains the raw coefficient estimates, standard errors, test statistics, and p-values prior to final filtering.
+
+---
+
+## significant_fledge_sites_annotated
+
+Significant CpG sites annotated by genomic feature class using the reference genome annotation.
+
+Features include:
+- TSS
+- promoter
+- 5′UTR
+- 3′UTR
+- gene body
+- upstream10k
+- downstream10k
+- intergenic
+
+---
+
+## significant_fledge_sites_TSS_annotated
+
+Significant CpGs annotated with:
+- Nearest gene
+- Signed distance to transcription start site (TSS)
+- Direction (upstream, downstream, at_TSS)
+
+---
+
+## significant_fledge_sites_annotated_xf_carers_model
+
+Annotated significant CpGs derived from the carers + xfoster model context.
+
+---
+
+## Notes
+
+Raw methylation matrices and large intermediate files are not included in this folder due to file size constraints.
+
+All results were generated using R packages including:
+- data.table
+- glmmTMB
+- GenomicRanges
+- GenomicFeatures
+- dmrff
+- tidyverse
+
+The analysis was conducted using the NCBI genome assembly GCA_013400735.1.
+
+
