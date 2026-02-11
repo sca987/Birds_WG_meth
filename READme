@@ -1,0 +1,111 @@
+
+# Carers GLMM Methylation Analysis  
+Susan C. Anderson  
+2026-02-11  
+
+This repository contains the analysis workflow and results for a site-specific beta regression GLMM examining the effect of cooperative care (2 carers vs 3+ carers) on DNA methylation in chestnut-crowned babbler fledglings.
+
+The model tested:
+
+perc_meth ~ carers + xfoster + age + (1 | natal_group)
+
+Primary focus of downstream analyses is the **carers3+ term only**.
+
+---
+
+## Analysis Steps
+
+1. Methylation filtering pipeline
+   - ≥10× coverage
+   - Remove 99.9% per-sample coverage outliers
+   - ≥60% site presence per carers group
+   - Remove lowest 10% variance sites
+
+2. Site-specific GLMM (beta regression, logit link)
+
+3. FDR correction
+   - By-term BH correction
+   - Significance threshold: FDR ≤ 0.01
+
+4. Effect size filtering
+   - Absolute methylation change ≥ 25%
+
+5. CpG annotation
+   - Nearest TSS
+   - Genomic feature classification
+
+6. DMR identification (DMRFF)
+   - Carers3+ term only
+   - CpGs within 2000 bp merged
+   - n ≥ 3 CpGs per DMR
+   - FDR < 0.05
+
+---
+
+## Files in This Repository
+
+### Full_code
+Complete end-to-end analysis script including:
+- Filtering
+- GLMM modeling
+- FDR filtering
+- Δ% calculation
+- CpG annotation
+- DMRFF analysis
+
+---
+
+### glmm_beta_significant_sites_CARERS_bytermFDR01_25pp.csv
+Final significant CpG sites:
+- By-term FDR ≤ 0.01
+- |Δ methylation| ≥ 25%
+- Represents carers3+ effect only
+
+---
+
+### glmm_results_beta_all_carers_xfoster_age.csv
+Full per-site GLMM results for:
+- Intercept
+- carers3+
+- xfoster
+- age
+
+---
+
+### significant_fledge_sites_annotated
+Genomic feature annotation of significant CpGs.
+
+---
+
+### significant_fledge_sites_TSS_annotated
+Nearest gene + signed distance to TSS for significant CpGs.
+
+---
+
+### significant_fledge_sites_annotated_xf_carers_model
+Annotated results specific to the carers + xfoster model.
+
+---
+
+## Data Availability
+
+Raw methylation matrices and large intermediate files are not included due to file size constraints. These are available upon request.
+
+---
+
+## Reproducibility
+
+All analyses were conducted in R using:
+
+- data.table
+- glmmTMB
+- GenomicRanges
+- GenomicFeatures
+- dmrff
+- tidyverse packages
+
+Full reproducibility requires access to the filtered methylation dataset and genome annotation (GCA_013400735.1).
+
+
+
+
